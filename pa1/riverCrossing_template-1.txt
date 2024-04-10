@@ -1,0 +1,29 @@
+-- NAME: student Name
+
+MODULE main
+
+VAR		
+    -- declare each variable
+	farmer:  {east, west};
+	goat:    {east, west};
+	cabbage: {east, west};
+	wolf:    {east, west};
+
+
+
+
+ASSIGN
+    -- Initialize everyone to the Eastern bank
+	init(farmer)   := east;
+	init(goat)     := east;
+	init(cabbage)  := east;
+	init(wolf)     := east;
+
+
+    --Enter next definitions here
+
+
+
+
+    -- CTL formula which checks for a path to the Western bank
+SPEC EF(farmer = west & cabbage = west & goat = west & wolf = west)

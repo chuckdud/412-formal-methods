@@ -1,0 +1,105 @@
+-- NAME:  Charles Dudley
+-- netid: cddudley
+
+MODULE main
+	VAR
+		-- Declare the set of system variable
+			-- false: on West
+			-- true:  on East
+		FARMER  : boolean;
+		GOAT    : boolean;
+		WOLF    : boolean;
+		CABBAGE : boolean;
+	
+	INIT
+		-- Initially, everything is on the east
+		FARMER  = FALSE &
+		GOAT    = FALSE &
+		WOLF    = FALSE &
+		CABBAGE = FALSE;
+	
+	TRANS
+	-- State 1 ->
+	((!FARMER & !GOAT & !WOLF & !CABBAGE) ->
+		-- State 2:
+		((next(FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(!CABBAGE))) 
+	) &
+	-- State 2 ->
+	((FARMER & GOAT & !WOLF & !CABBAGE) ->
+		-- State 1 :
+		((next(!FARMER)) & (next(!GOAT)) & (next(!WOLF)) & (next(!CABBAGE))) |
+		-- State 3:
+		((next(!FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(!CABBAGE)))
+	) &
+	-- State 3 ->
+	((!FARMER & GOAT & !WOLF & !CABBAGE) ->
+		-- State 2:
+		((next(FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(!CABBAGE))) |
+		-- State 4 :
+		((next(FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(CABBAGE))) |
+		-- State 6:
+		((next(FARMER)) & (next(GOAT)) & (next(WOLF)) & (next(!CABBAGE)))
+	) &
+	-- State 4 ->
+	((FARMER & GOAT & !WOLF & CABBAGE) ->
+		-- State 3:
+		((next(!FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(!CABBAGE))) |
+		-- State 5:
+		((next(!FARMER)) & (next(!GOAT)) & (next(!WOLF)) & (next(CABBAGE)))
+	) &
+
+	-- State 5 ->
+	((!FARMER & !GOAT & !WOLF & CABBAGE) ->
+		-- State 4 :
+		((next(FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(CABBAGE))) |
+		-- State 8:
+		((next(FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(CABBAGE)))
+	) &
+
+	-- State 6 ->
+	((FARMER & GOAT & WOLF & !CABBAGE) ->
+		-- State 3:
+		((next(!FARMER)) & (next(GOAT)) & (next(!WOLF)) & (next(!CABBAGE))) |
+		-- State 7:
+		((next(!FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(!CABBAGE)))
+	) &
+			
+	-- State 7 ->
+	((!FARMER & !GOAT & WOLF & !CABBAGE) ->
+		-- State 6:
+		((next(FARMER)) & (next(GOAT)) & (next(WOLF)) & (next(!CABBAGE))) |
+		-- State 8:
+		((next(FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(CABBAGE)))
+	) &
+	
+	-- State 8 ->
+	((FARMER & !GOAT & WOLF & CABBAGE) ->
+		-- State 5:
+		((next(!FARMER)) & (next(!GOAT)) & (next(!WOLF)) & (next(CABBAGE))) |
+		-- State 7:
+		((next(!FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(!CABBAGE))) |
+		-- State 9:
+		((next(!FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(CABBAGE)))
+	) &
+	
+	-- State 9 ->
+	((!FARMER & !GOAT & WOLF & CABBAGE) ->
+		-- State 8:
+		((next(FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(CABBAGE))) |
+		-- State 10:
+		((next(FARMER)) & (next(GOAT)) & (next(WOLF)) & (next(CABBAGE)))
+	) &
+	
+	-- State 10 ->
+	((FARMER & GOAT & WOLF & CABBAGE) ->
+		-- State 9:
+		((next(!FARMER)) & (next(!GOAT)) & (next(WOLF)) & (next(CABBAGE)))
+	)
+
+	-- CTL spec for "everyone can exist on western bank at the same time"
+	CTLSPEC EF (FARMER & GOAT & WOLF & CABBAGE)
+	-- CTL spec which is negation of previous (generates counterexample)
+	CTLSPEC !EF (FARMER & GOAT & WOLF & CABBAGE)
+
+	-- LTL spec for similar prop
+	-- LTLSPEC !F (FARMER & GOAT & WOLF & CABBAGE)

@@ -1,0 +1,11 @@
+never spec {    /* !([] (<> ((((p_status[0]==RUNNING)) || ((p_status[1]==RUNNING))) || ((p_status[2]==RUNNING))))) */
+T0_init:
+	do
+	:: (! (((((p_status[0]==RUNNING)) || ((p_status[1]==RUNNING))) || ((p_status[2]==RUNNING))))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((((p_status[0]==RUNNING)) || ((p_status[1]==RUNNING))) || ((p_status[2]==RUNNING))))) -> goto accept_S4
+	od;
+}
