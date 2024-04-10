@@ -52,7 +52,7 @@ init
 
 ltl spec { 
     []<>(
-//        available > 0 && 
+        //available > 0 && 
         (p_status[0] == RUNNING ||
          p_status[1] == RUNNING ||
          p_status[2] == RUNNING) 
