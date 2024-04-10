@@ -16,16 +16,12 @@ proctype pi(short i; short max)
 
     do
     :: p_status[i] == IDLE -> p_status[i] = REQUESTING;
-    :: p_status[i] == REQUESTING ->
+    :: p_status[i] == REQUESTING  && available > 0 ->
+        available--;
+        occupied++;
         if
-        :: available > 0 -> 
-            available--;
-            occupied++;
-            if
-            :: occupied == max -> p_status[i] = RUNNING;
-            :: occupied < max -> ;
-            fi;
-        :: available <= 0 -> ;
+        :: occupied == max -> p_status[i] = RUNNING;
+        :: occupied < max -> ;
         fi;
     :: p_status[i] == RUNNING ->
         //progress_label:;
@@ -43,17 +39,18 @@ init
         p_status[0] = IDLE;
         p_status[1] = IDLE;
         p_status[2] = IDLE;
+
+        run pi(0, 2);
+        run pi(1, 2);
+        run pi(2, 1);
     }
 
-    run pi(0, 2);
-    run pi(1, 2);
-    run pi(2, 1);
 }
 
 ltl spec { 
     []<>(
-        //available > 0 && 
         (p_status[0] == RUNNING ||
          p_status[1] == RUNNING ||
          p_status[2] == RUNNING) 
+        )
 }
