@@ -1,27 +1,19 @@
 /*
-name: Charles Dudley
-netid: cddudley
-
-2.1 
-    deadlock possible <===> M + 3 <= N0 + N1 + N2
-
-    more generally (and informally):
-        deadlock possible <===> M + NUM_PROCS <= SUM(N_i)
-
-2.2
-        In order to fix the deadlock issue, we could add another case
-    to our 'do' loop with guard clause 'p_status[i] == REQUESTING && available == 0`.
-    This condition would 
+deadlock possible <===> M + NUM_PROCS <= SUM(N_i)
 */
-#define M  15
+#define NUM_PROCS 5
 
-#define N0 15
-#define N1 2
+#define M  10
+
+#define N0 9
+#define N1 3
 #define N2 1
+#define N3 1
+#define N4 1
 
 mtype = {IDLE, REQUESTING, RUNNING}
 
-mtype p_status[3] = IDLE;
+mtype p_status[NUM_PROCS] = IDLE;
 
 show short available = M;
 
@@ -32,7 +24,7 @@ proctype pi(short i; short max)
 
     do
     :: p_status[i] == IDLE -> p_status[i] = REQUESTING;
-    :: p_status[i] == REQUESTING && available > 0 ->
+    :: p_status[i] == REQUESTING  && available > 0 ->
         atomic{
             available--;
             occupied++;
@@ -59,10 +51,15 @@ init
         p_status[0] = IDLE;
         p_status[1] = IDLE;
         p_status[2] = IDLE;
+        p_status[3] = IDLE;
+        p_status[4] = IDLE;
 
         run pi(0, N0);
         run pi(1, N1);
         run pi(2, N2);
+        run pi(3, N3);
+        run pi(4, N4);
+
     }
 
 }
@@ -71,5 +68,7 @@ ltl spec {
     []<>(
         (p_status[0] == RUNNING ||
          p_status[1] == RUNNING ||
-         p_status[2] == RUNNING) 
+         p_status[2] == RUNNING ||
+         p_status[3] == RUNNING ||
+         p_status[4] == RUNNING) 
         ) }

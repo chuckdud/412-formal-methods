@@ -9,9 +9,7 @@ netid: cddudley
         deadlock possible <===> M + NUM_PROCS <= SUM(N_i)
 
 2.2
-        In order to fix the deadlock issue, we could add another case
-    to our 'do' loop with guard clause 'p_status[i] == REQUESTING && available == 0`.
-    This condition would 
+    
 */
 #define M  15
 
@@ -40,6 +38,12 @@ proctype pi(short i; short max)
             :: occupied == max -> p_status[i] = RUNNING;
             :: occupied < max -> ;
             fi;
+        }
+    // failing because one can just bounce back and forth between these two cases
+    :: p_status[i] == REQUESTING && available == 0 ->
+        atomic{
+            available++;
+            occupied--;
         }
     :: p_status[i] == RUNNING ->
         //progress_label:;
@@ -72,4 +76,14 @@ ltl spec {
         (p_status[0] == RUNNING ||
          p_status[1] == RUNNING ||
          p_status[2] == RUNNING) 
-        ) }
+    )
+}
+
+// ltl spec2 {
+//     ![]<>(
+//         available == 0 &&
+//         (p_status[0] == RUNNING ||
+//          p_status[1] == RUNNING ||
+//          p_status[2] == RUNNING) 
+//     )
+// }
