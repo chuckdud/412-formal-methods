@@ -14,7 +14,7 @@ netid: cddudley
 #define M  15
 
 #define N0 15
-#define N1 2
+#define N1 6
 #define N2 1
 
 mtype = {IDLE, REQUESTING, RUNNING}
@@ -23,33 +23,39 @@ mtype p_status[3] = IDLE;
 
 show short available = M;
 
+show short total_need = 0;
+
 proctype pi(short i; short max)
 {
-    // show mtype status = IDLE; 
     short occupied = 0;
 
     do
-    :: p_status[i] == IDLE -> p_status[i] = REQUESTING;
-    :: p_status[i] == REQUESTING && available > 0 ->
+    :: p_status[i] == IDLE -> 
         atomic{
-            available--;
-            occupied++;
             if
-            :: occupied == max -> p_status[i] = RUNNING;
-            :: occupied < max -> ;
+            :: available >= (total_need + max) ->
+                total_need = total_need + max;
+                p_status[i] = REQUESTING;
             fi;
         }
-    // failing because one can just bounce back and forth between these two cases
-    :: p_status[i] == REQUESTING && available == 0 ->
+    :: p_status[i] == REQUESTING ->
         atomic{
-            available++;
-            occupied--;
+            if
+            :: available > 0 
+                available--;
+                occupied++;
+                if
+                :: occupied == max -> p_status[i] = RUNNING;
+                :: occupied < max -> ;
+                fi;
+            fi;
         }
-    :: p_status[i] == RUNNING ->
-        //progress_label:;
+   :: p_status[i] == RUNNING ->
+        // progress_label:;
     :: p_status[i] == RUNNING ->
         atomic{
             occupied = 0;
+            total_need = total_need - max;
             available = available + max;
             p_status[i] = IDLE;
         }
