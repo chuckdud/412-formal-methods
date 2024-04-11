@@ -9,13 +9,33 @@ netid: cddudley
         deadlock possible <===> M + NUM_PROCS <= SUM(N_i)
 
 2.2
-        In order to fix the deadlock issue, we could add another case
-    to our 'do' loop with guard clause 'p_status[i] == REQUESTING && available == 0`.
-    This condition would 
+        In order to fix the deadlock issue, we could strengthen the requirements
+    for a process to transition from "IDLE" to "REQUESTING". In the
+    current implementation, any request is free to make this transition regardless
+    of the state of the system. We could restrict processes to only make this transition
+    when doing so will not create a need which exceeds our memory budget. In this case we
+    will never allow a process to request more resources than are currently available, so
+    once REQUESTING there will always be sufficient memory for that process. We can do this
+    by keeping track of an additional field 'total_need' which tracks the total resoures
+    needed for all REQUESTING and RUNNING processes.
+
+        A global field should be added called 'total_need' (initialized to 0)
+
+        The body for the first case of the 'do' loop should enforce our restriction, blocking
+    until satisfied:
+            if
+            :: available >= (total_need + max) ->
+                total_need = total_need + max;
+                p_status[i] = REQUESTING;
+            fi;
+
+        Upon a process' transition from RUNNING to IDLE (final block of 'do' loop), total_need 
+    should be decremented accordingly.
+
 */
 #define M  15
 
-#define N0 15
+#define N0 14
 #define N1 2
 #define N2 1
 
@@ -27,18 +47,21 @@ show short available = M;
 
 proctype pi(short i; short max)
 {
-    // show mtype status = IDLE; 
     short occupied = 0;
 
     do
-    :: p_status[i] == IDLE -> p_status[i] = REQUESTING;
-    :: p_status[i] == REQUESTING && available > 0 ->
+    :: p_status[i] == IDLE -> 
+        p_status[i] = REQUESTING;
+    :: p_status[i] == REQUESTING ->
         atomic{
-            available--;
-            occupied++;
             if
-            :: occupied == max -> p_status[i] = RUNNING;
-            :: occupied < max -> ;
+            :: available > 0 ->
+                available--;
+                occupied++;
+                if
+                :: occupied == max -> p_status[i] = RUNNING;
+                :: occupied < max -> ;
+                fi;
             fi;
         }
     :: p_status[i] == RUNNING ->
