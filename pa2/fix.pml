@@ -52,7 +52,7 @@ proctype pi(short i; short max)
         }
    :: p_status[i] == RUNNING ->
         // progress_label:;
-    :: p_status[i] == RUNNING ->
+   :: p_status[i] == RUNNING ->
         atomic{
             occupied = 0;
             total_need = total_need - max;
@@ -85,11 +85,3 @@ ltl spec {
     )
 }
 
-// ltl spec2 {
-//     ![]<>(
-//         available == 0 &&
-//         (p_status[0] == RUNNING ||
-//          p_status[1] == RUNNING ||
-//          p_status[2] == RUNNING) 
-//     )
-// }
