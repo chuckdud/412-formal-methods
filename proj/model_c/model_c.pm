@@ -1,24 +1,55 @@
 mdp
+    
+    module turner
 
-module aircraft
+    // turning aircraft
 
-    c : [1..5] init 1;
+    // position of turning aircraft
+    a : [1..8] init 1;
 
-    [go]    c < 5 -> 0.9:(c'=c+1) + 0.1 : (c'=c);
-    [turn]  c < 5 -> 0.8:(c'=c) + 0.2 : (c'=c+1);
-    [go]    c = 5 -> 1:(c'=c);
-    [turn]  c = 5 -> 1:(c'=c); 
+    //  actions:
+    //      go   : move ahead
+    //      turn : change trajectory (only possible when a = 3)
 
-endmodule
+    [go] a != 5 & a != 8 -> 
+                    .85: (a'=a+1) + 
+                    .15: (a'=a)   ;
 
-module storm
+    [go] a = 8 ->
+                    .85: (a'=5) +
+                    .15: (a'=a) ;
+    
+    [go] a = 5 ->
+                    1.0: (a'=a) ; 
+    
+    [turn] a = 3 ->
+                    .90: (a'=6)   +
+                    .05: (a'=a+1) +
+                    .05: (a'=a+1) ;   
 
-    p : [1..5] init 1;
+    endmodule
 
-    [go] p < 5 -> 0.7:(p'=p) + 0.3 : (p'=p+1);
-    [go] p = 5 -> (p'=p);
 
-    [turn] p < 5 -> 0.7:(p'=p) + 0.3 : (p'=p+1);
-    [turn] p = 5 -> (p'=p);
 
-endmodule
+    module storm
+
+    // presence of storm (0 = absent, 1 = present)
+    p : [0..1] init 0;
+
+    // actions defined here to synchronize with aircraft
+
+    [go]   p = 0 ->  
+                    0.90:(p'=p) +
+                    0.10:(p'=1);
+    [go]   p = 1 ->  
+                    0.90:(p'=p) +
+                    0.10:(p'=0);
+
+    [turn]   p = 0 ->  
+                    0.90:(p'=p) +
+                    0.10:(p'=1);
+    [turn]   p = 1 ->  
+                    0.90:(p'=p) +
+                    0.10:(p'=0);
+
+    endmodule
