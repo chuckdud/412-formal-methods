@@ -3,8 +3,8 @@
 Here **PRISM** refers to both a *modeling language* and a *model checker*. This project uses the PRISM modeling language to represent various different systems to be analyzed with the PRISM model checker.
 
 ## Systems
-1. **model_c** - simple obstacle avoidance
-1. ***654*** - probabilistic analysis of the dice game *654*
+1. [**model_c**](./model_c/README.md) - simple obstacle avoidance
+1. [***654***](./654/README.md) - probabilistic analysis of the dice game *654*
 
 Each of these systems involves the interaction between a single **non-deterministic Agent**, represented by a **Markov Decision Process**, with its **deterministic environment**, represented by **Discrete-Time Markov Chains**.
 
