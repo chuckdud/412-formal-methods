@@ -1,4 +1,4 @@
-# Simple obstacle avoidance problem
+# model_c - Simple Obstacle Avoidance Problem
 
 An aircraft is travelling along a planned trajectory at a constant rate. The planned trajectory, $T$, follows locations $[a_1,a_2,a_3,a_4,a_5]$ without making any maneuvers, which is the optimal path from initial location, $a_1$, to destination, $a_5$.
 
