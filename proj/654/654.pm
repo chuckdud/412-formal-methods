@@ -38,12 +38,12 @@ mdp
     
     // player must roll all non-654 dice OR quit
     [next_turn] n < 4 & to_roll = 0 ->
-        1: (rolled_1'=false) &
-            (rolled_2'=false) &
-            (rolled_3'=false) &
-            (rolled_4'=false) &
-            (rolled_5'=false) &
-            (rolled_6'=false) &
+        1:  (rolled_1'=(got_6 = 1 | got_5 = 1 | got_4 = 1)) &
+            (rolled_2'=(got_6 = 2 | got_5 = 2 | got_4 = 2)) &
+            (rolled_3'=(got_6 = 3 | got_5 = 3 | got_4 = 3)) &
+            (rolled_4'=(got_6 = 4 | got_5 = 4 | got_4 = 4)) &
+            (rolled_5'=(got_6 = 5 | got_5 = 5 | got_4 = 5)) &
+            (rolled_6'=(got_6 = 6 | got_5 = 6 | got_4 = 6)) &
             (to_roll' = (got_6!=0) ? ((got_5!=0) ? ((got_4!=0) ? 2 : 3) : 4) : 5 )&
             (n'=n+1);
 
@@ -60,7 +60,7 @@ mdp
         0.166666666: (die1'=5) & (rolled_1' = true) & (to_roll'=to_roll-1) & (got_5' = got_6!=0 ? 1 : got_5) +
         0.166666666: (die1'=6) & (rolled_1' = true) & (to_roll'=to_roll-1) & (got_6' = 1) ;  
 
-    [roll_2] n < 4 & !rolled_2 & to_roll > 0 & //not finished and haven't yet rolled this die
+    [roll_2] n < 4 & rolled_1 & !rolled_2 & to_roll > 0 & //not finished and haven't yet rolled this die
                 got_6 != 2 & got_5 != 2 & got_4 != 2 -> // this die is not 6 (ship) 5 (captain), or 4 (crew)
         0.166666667: (die2'=1) & (rolled_2' = true) & (to_roll'=to_roll-1) + 
         0.166666667: (die2'=2) & (rolled_2' = true) & (to_roll'=to_roll-1) +
@@ -69,7 +69,7 @@ mdp
         0.166666666: (die2'=5) & (rolled_2' = true) & (to_roll'=to_roll-1) & (got_5' = got_6!=0 ? 2 : got_5) +
         0.166666666: (die2'=6) & (rolled_2' = true) & (to_roll'=to_roll-1) & (got_6' = 2) ; 
 
-    [roll_3] n < 4 & !rolled_3 & to_roll > 0 & //not finished and haven't yet rolled this die
+    [roll_3] n < 4 & rolled_2 & !rolled_3 & to_roll > 0 & //not finished and haven't yet rolled this die
             got_6 != 3 & got_5 != 3 & got_4 != 3 -> // this die is not 6 (ship) 5 (captain), or 4 (crew)
         0.166666667: (die3'=1) & (rolled_3' = true) & (to_roll'=to_roll-1) + 
         0.166666667: (die3'=2) & (rolled_3' = true) & (to_roll'=to_roll-1) +
@@ -78,7 +78,7 @@ mdp
         0.166666666: (die3'=5) & (rolled_3' = true) & (to_roll'=to_roll-1) & (got_5' = got_6!=0 ? 3 : got_5) +
         0.166666666: (die3'=6) & (rolled_3' = true) & (to_roll'=to_roll-1) & (got_6' = 3) ;  
 
-    [roll_4] n < 4 & !rolled_4 & to_roll > 0 & //not finished and haven't yet rolled this die
+    [roll_4] n < 4 & rolled_3 & !rolled_4 & to_roll > 0 & //not finished and haven't yet rolled this die
             got_6 != 4 & got_5 != 4 & got_4 != 4 -> // this die is not 6 (ship) 5 (captain), or 4 (crew)
         0.166666667: (die4'=1) & (rolled_4' = true) & (to_roll'=to_roll-1) + 
         0.166666667: (die4'=2) & (rolled_4' = true) & (to_roll'=to_roll-1) +
@@ -87,7 +87,7 @@ mdp
         0.166666666: (die4'=5) & (rolled_4' = true) & (to_roll'=to_roll-1) & (got_5' = got_6!=0 ? 4 : got_5) +
         0.166666666: (die4'=6) & (rolled_4' = true) & (to_roll'=to_roll-1) & (got_6' = 4) ;
 
-    [roll_5] n < 4 & !rolled_5 & to_roll > 0 & //not finished and haven't yet rolled this die
+    [roll_5] n < 4 & rolled_4 & !rolled_5 & to_roll > 0 & //not finished and haven't yet rolled this die
             got_6 != 5 & got_5 != 5 & got_4 != 5 -> // this die is not 6 (ship) 5 (captain), or 4 (crew)
         0.166666667: (die5'=1) & (rolled_5' = true) & (to_roll'=to_roll-1) + 
         0.166666667: (die5'=2) & (rolled_5' = true) & (to_roll'=to_roll-1) +
@@ -96,7 +96,7 @@ mdp
         0.166666666: (die5'=5) & (rolled_5' = true) & (to_roll'=to_roll-1) & (got_5' = got_6!=0 ? 5 : got_5) +
         0.166666666: (die5'=6) & (rolled_5' = true) & (to_roll'=to_roll-1) & (got_6' = 5) ;  
 
-    [roll_6] n < 4 & !rolled_6 & to_roll > 0 & //not finished and haven't yet rolled this die
+    [roll_6] n < 4 & rolled_5 & !rolled_6 & to_roll > 0 & //not finished and haven't yet rolled this die
             got_6 != 6 & got_5 != 6 & got_4 != 6 -> // this die is not 6 (ship) 5 (captain), or 4 (crew)
         0.166666667: (die6'=1) & (rolled_6' = true) & (to_roll'=to_roll-1) + 
         0.166666667: (die6'=2) & (rolled_6' = true) & (to_roll'=to_roll-1) +
