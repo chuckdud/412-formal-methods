@@ -1,49 +1,27 @@
 mdp
-                
+
+    // reduced from 1073741824 states
+    // to            536870912 states  
+    // still too big
     module aircraft
 
         x : [0..7] init 0;  
         y : [0..7] init 0;
-        heading : [0..3] init 3; // up=0, right=1, down=2, left=3
-        // damage_count : [0..2] init 0; // damage sustained by aircraft
+        heading : [0..1] init 0; // 0=right 1=up
 
-        [go] heading = 0 & y < 7 ->
-            .90: (y'=y+1) + 
-            .10: (y'=y);
-        [go] heading = 1 & x > 0 ->
-            .90: (x'=x-1) + 
-            .10: (x'=x);
-        [go] heading = 2 & y > 0 ->
-            .90: (y'=y-1) + 
-            .10: (y'=y);
-        [go] heading = 3 & x < 7 ->
+        [go] heading = 0 & x < 7 ->
             .90: (x'=x+1) + 
             .10: (x'=x);
+        [go] heading = 1 & y < 7 ->
+            .90: (y'=y+1) + 
+            .10: (y'=y);
         
-        [turn_left] heading = 0 ->
-            .90: (heading'=3) + 
-            .10: (y'= y < 7 ? y + 1 : y);
         [turn_left] heading = 1 ->
             .90: (heading'=0) + 
-            .10: (x'= x > 0 ? x - 1 : x);
-        [turn_left] heading = 2 ->
-            .90: (heading'=1) + 
-            .10: (y'=y > 0 ? y - 1 : y);
-        [turn_left] heading = 3 ->
-            .90: (heading'=2) + 
-            .10: (x'= x < 7 ? x + 1 : x);
-
-        [turn_right] heading = 0 ->
-            .90: (heading'=1) + 
             .10: (y'= y < 7 ? y + 1 : y);
-        [turn_right] heading = 1 ->
-            .90: (heading'=2) + 
-            .10: (x'= x > 0 ? x - 1 : x);
-        [turn_right] heading = 2 ->
-            .90: (heading'=3) + 
-            .10: (y'=y > 0 ? y - 1 : y);
-        [turn_right] heading = 3 ->
-            .90: (heading'=0) + 
+
+        [turn_up] heading = 0 ->
+            .90: (heading'=1) + 
             .10: (x'= x < 7 ? x + 1 : x);
     
     endmodule

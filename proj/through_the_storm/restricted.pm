@@ -1,12 +1,10 @@
 mdp
-    // 1073741824 states reduced to
     // 25600 states    
     module aircraft
 
         x : [0..4] init 0;  
         y : [0..4] init 0;
         heading : [0..1] init 0; // 0=right 1=up
-        // damage_count : [0..2] init 0; // damage sustained by aircraft
 
         [go] heading = 0 & x < 4 ->
             .90: (x'=x+1) + 
